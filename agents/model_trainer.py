@@ -22,7 +22,7 @@ class ModelTrainer(BaseAgent):
     def __init__(self, config: AgentConfig, state: PipelineState):
         super().__init__(config, state)
         
-        # ✅ SAFE: Use getattr() with default values for all parameters
+        #  SAFE: Use getattr() with default values for all parameters
         # ADDED: Support for both target_column and target_col for backward compatibility
         self.target_col = getattr(self.config, 'target_column', None)
         if self.target_col is None:
@@ -37,10 +37,10 @@ class ModelTrainer(BaseAgent):
         self.early_stopping = getattr(self.config, 'early_stopping', False)
         self.output_dir = getattr(self.config, 'output_dir', 'model_report')
         
-        # ✅ FIXED: Add proper fallback for data source
+        #  Add proper fallback for data source
         self.df = self._get_data_from_state()
         
-        # ✅ FIXED: Handle schema access with multiple fallback options
+        #  Handle schema access with multiple fallback options
         self.schema = self._get_schema_from_state()
         
         # ADDED: Get target column from state if available (from preprocessor)
@@ -67,7 +67,7 @@ class ModelTrainer(BaseAgent):
 
     def _get_data_from_state(self):
         """Get data from state with proper fallback mechanism."""
-        # ✅ FIXED: Proper fallback logic
+        #  Proper fallback logic
         if hasattr(self.state, 'processed_df') and self.state.processed_df is not None:
             self.logger.info("Using processed data from state")
             return self.state.processed_df
@@ -176,7 +176,7 @@ class ModelTrainer(BaseAgent):
         """Preprocesses the data and splits it into training and testing sets."""
         self.logger.info("Preparing data...")
         
-        # ✅ FIXED: Check if data is available with better error message
+        #  Check if data is available with better error message
         if self.df is None:
             if hasattr(self.state, 'raw_df') and self.state.raw_df is not None:
                 self.df = self.state.raw_df
@@ -184,7 +184,7 @@ class ModelTrainer(BaseAgent):
             else:
                 raise ValueError("No data available for training. Run DataLoadingAgent first.")
         
-        # ✅ FIXED: Handle missing schema by inferring from data
+        #  Handle missing schema by inferring from data
         if self.schema is None:
             self.logger.warning("No schema available in state. Inferring schema from data...")
             self.schema = self._infer_schema_from_data(self.df)
@@ -208,7 +208,7 @@ class ModelTrainer(BaseAgent):
         self.problem_type = self._detect_problem_type(y)
         self.logger.info(f"Detected problem type: {self.problem_type}")
 
-        # ✅ FIXED: Always run preprocessing to ensure categorical encoding works
+        #  Always run preprocessing to ensure categorical encoding works
         self.logger.info("Running preprocessing on features...")
         
         # Create config and state for DataPreprocessor
@@ -235,11 +235,11 @@ class ModelTrainer(BaseAgent):
         self.preprocessor.fit(X)
         X_processed = self.preprocessor.transform(X)
         
-        # ✅ ADDED: Debug check - verify preprocessing worked
+        #  Debug check - verify preprocessing worked
         self.logger.info(f"Processed data shape: {X_processed.shape}")
         self.logger.info(f"Processed data types:\n{X_processed.dtypes}")
         
-        # ✅ ADDED: Check for any remaining string columns that could cause issues
+        #  Check for any remaining string columns that could cause issues
         string_columns = X_processed.select_dtypes(include=['object']).columns
         if len(string_columns) > 0:
             self.logger.warning(f"String columns found after preprocessing: {list(string_columns)}")
@@ -591,7 +591,7 @@ if __name__ == '__main__':
             self.test_size = 0.2
             self.random_state = 42
             self.metrics = ['accuracy', 'precision', 'recall', 'f1', 'roc_auc']
-            self.cross_validate = False  # ✅ Disabled for testing
+            self.cross_validate = False  #  Disabled for testing
             self.cv_folds = 5
             self.class_weights = 'balanced'
             self.output_dir = 'model_report'
