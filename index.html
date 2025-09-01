@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Agent System for Automatic Data Analysis & Modeling</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Montserrat:wght@700&display=swap');
+
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: rgba(22, 27, 34, 0.8);
+            --border-color: #30363d;
+            --primary-text: #c9d1d9;
+            --secondary-text: #8b949e;
+            --header-text: #ffffff;
+            --accent-color: #58a6ff;
+            --accent-glow: rgba(88, 166, 255, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--primary-text);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        #background-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+        }
+
+        .header {
+            text-align: center;
+            padding: 5rem 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3rem;
+            color: var(--header-text);
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .header .tagline {
+            font-size: 1.25rem;
+            font-weight: 300;
+            color: var(--accent-color);
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3), 0 0 15px var(--accent-glow);
+        }
+
+        .card h2 {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--accent-color);
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card p, .card li {
+            font-size: 1.05rem;
+            margin-bottom: 1rem;
+        }
+        
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .features-list li {
+            padding-left: 2rem;
+            position: relative;
+        }
+
+        .features-list li::before {
+            content: '✓';
+            font-weight: 600;
+            color: var(--accent-color);
+            position: absolute;
+            left: 0;
+            top: 2px;
+        }
+        
+        .workflow-timeline {
+            position: relative;
+            padding: 2rem 0;
+        }
+        .timeline-item {
+            padding: 1rem 2rem 1rem 4rem;
+            position: relative;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border-color);
+        }
+        .timeline-item:last-child::before {
+            display: none;
+        }
+        .timeline-dot {
+            position: absolute;
+            left: 12px;
+            top: 22px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            border: 3px solid var(--bg-color);
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+        .timeline-item h4 {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--header-text);
+            font-size: 1.2rem;
+        }
+
+        .file-structure {
+            background-color: #010409;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            font-family: 'Menlo', 'Consolas', 'Courier New', monospace;
+            color: #a9b7c6;
+            white-space: pre;
+            font-size: 0.9rem;
+        }
+
+        .author-card {
+            text-align: center;
+        }
+        .author-card h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--header-text);
+        }
+        .author-card p {
+            font-size: 1.1rem;
+            color: var(--secondary-text);
+            margin-bottom: 1rem;
+        }
+        .author-card .passion {
+            font-style: italic;
+            color: var(--primary-text);
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .footer p {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.1rem;
+            font-style: italic;
+            color: var(--accent-color);
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .header h1 { font-size: 2.2rem; }
+            .header .tagline { font-size: 1.1rem; }
+            .card { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="background-canvas"></canvas>
+
+    <div class="container">
+        <header class="header">
+            <h1>Multi-Agent System for Automatic Data Analysis & Modeling</h1>
+            <p class="tagline">An Intelligent, Collaborative Digital Workforce for Your Data</p>
+        </header>
+
+        <main>
+            <section class="card">
+                <h2>🚀 Project Overview</h2>
+                <p>This project presents a sophisticated **Multi-Agent System** designed to fully automate the data analysis & Modeling lifecycle. It moves beyond traditional monolithic scripts by employing a team of specialized AI agents that collaborate in harmony. Each agent—a dedicated expert in its domain—contributes to a seamless workflow that transforms raw data into high-value, actionable insights with minimal human intervention.</p>
+            </section>
+
+            <section class="card">
+                <h2>🧠 Multi-Agent Workflow</h2>
+                <p>The system's power lies in its orchestrated pipeline, where agents execute tasks sequentially, building upon the work of their predecessors. This structured collaboration ensures a comprehensive and reliable analysis.</p>
+                <div class="workflow-timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <h4>1. Data Loading Agent</h4>
+                        <p>Initiates the process by ingesting the raw CSV dataset, ensuring data is correctly loaded into the system.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <h4>2. Preprocessing Agent</h4>
+                        <p>Performs the critical tasks of data cleaning, handling missing values, encoding categorical features, and scaling numerical data.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <h4>3. EDA Agent</h4>
+                        <p>Generates a deep Exploratory Data Analysis (EDA) report with statistical summaries and rich visualizations to uncover underlying patterns.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <h4>4. Modeling Agent</h4>
+                        <p>Applies machine learning algorithms to the prepared data, training a model and evaluating its performance with key metrics.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card">
+                <h2>⚙️ Features</h2>
+                <ul class="features-list">
+                    <li><strong>Fully Automated Pipeline:</strong> A complete, hands-off workflow from data ingestion to final reporting.</li>
+                    <li><strong>Modular Agent Architecture:</strong> Each agent is a replaceable, extensible expert, ensuring maintainability and scalability.</li>
+                    <li><strong>Intelligent Analysis:</strong> Automatically performs deep statistical analysis and generates insightful visualizations.</li>
+                    <li><strong>Integrated Machine Learning:</strong> Seamlessly trains and evaluates a baseline model to establish performance benchmarks.</li>
+                    <li><strong>Human-in-the-Loop:</strong> Designed for critical approval steps, blending AI automation with human oversight.</li>
+                    <li><strong>Lightweight & Pure:</strong> Built with standard Python libraries like `asyncio` and `pandas` for maximum portability.</li>
+                </ul>
+            </section>
+            
+            <section class="card">
+                <h2>📂 File Structure</h2>
+                <p>The project's architecture is designed for clarity and separation of concerns:</p>
+                <div class="file-structure">
+/
+|-- main.py             <span style="color: #6a737d;"># Main entry point to run the orchestrator</span>
+|-- orchestrator.py     <span style="color: #6a737d;"># Core workflow management</span>
+|-- config.py           <span style="color: #6a737d;"># Configuration (e.g., API keys)</span>
+|-- agents/             <span style="color: #6a737d;"># Directory for all agent classes</span>
+|   |-- base_agent.py
+|   |-- ...
+|-- logic/              <span style="color: #6a737d;"># Core implementation logic</span>
+|   |-- data_preprocessor.py
+|   |-- ...
+|-- eda_report/         <span style="color: #6a737d;"># Output for EDA reports and plots</span>
+|-- model_report/       <span style="color: #6a737d;"># Output for ML model reports</span>
+                </div>
+            </section>
+
+            <section class="card">
+                <h2>🛠️ How It Works</h2>
+                <p>The system is launched via the `main.py` script, which initializes and runs the `Orchestrator`.</p>
+                <ol>
+                    <li>The `Orchestrator` defines the sequence of agents to run.</li>
+                    <li>It creates a shared `PipelineState` object to pass data between agents.</li>
+                    <li>Using `asyncio`, it executes each agent in order, waiting for one to complete before starting the next.</li>
+                    <li>Each agent performs its task—loading, cleaning, analyzing, or modeling—and updates the shared state.</li>
+                    <li>The process culminates in the generation of detailed reports, providing a full summary of the data's story.</li>
+                </ol>
+            </section>
+            
+            <section class="card">
+                <h2>🌍 Real-World Impact</h2>
+                <ul>
+                    <li><strong>Healthcare:</strong> Automates patient data analysis and helps in faster disease prediction.</li>
+                    <li><strong>Finance:</strong> Speeds up fraud detection and improves risk modeling for banks.</li>
+                    <li><strong>Supply Chain:</strong> Predicts demand and optimizes inventory, reducing business costs.</li>
+                    <li><strong>Customer Support:</strong> Provides instant insights to improve response time and user satisfaction.</li>
+                    <li><strong>Corporate Decision-Making:</strong> Helps managers and executives make data-driven decisions quickly.</li>
+                </ul>
+            </section>
+
+            <section class="card">
+                <h2>🎯 Future Scope</h2>
+                 <ul>
+                    <li>Implement advanced error handling with retry logic and circuit breakers for enhanced robustness.</li>
+                    <li>Enable parallel execution for independent agents to optimize pipeline speed.</li>
+                    <li>Expand the model repository to include regression, clustering, and time-series algorithms.</li>
+                    <li>Develop an interactive web-based interface for a more user-friendly experience.</li>
+                </ul>
+            </section>
+            
+            <section class="card author-card">
+                <h2>👨‍🎓 About the Author</h2>
+                <h3>Aamir Suhail</h3>
+                <p>M.Sc. in Data Science | Aligarh Muslim University (AMU)</p>
+                <p class="passion">A dedicated student researcher passionate about exploring AI, Multi-Agent Systems, and creating innovative data-driven solutions.</p>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p>“Powered by Collaboration – Where Multiple Agents Think as One.”</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('background-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            let particles = [];
+            const numParticles = 100;
+
+            class Particle {
+                constructor(x, y) {
+                    this.x = x;
+                    this.y = y;
+                    this.size = Math.random() * 2 + 1;
+                    this.speedX = Math.random() * 0.4 - 0.2;
+                    this.speedY = Math.random() * 0.4 - 0.2;
+                    this.color = `rgba(88, 166, 255, ${Math.random() * 0.5 + 0.2})`;
+                }
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    if (this.size > 0.1) this.size -= 0.01;
+                }
+                draw() {
+                    ctx.fillStyle = this.color;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            function init() {
+                for (let i = 0; i < numParticles; i++) {
+                    particles.push(new Particle(Math.random() * canvas.width, Math.random() * canvas.height));
+                }
+            }
+
+            function handleParticles() {
+                for (let i = 0; i < particles.length; i++) {
+                    particles[i].update();
+                    particles[i].draw();
+                    if (particles[i].size <= 0.1) {
+                        particles.splice(i, 1);
+                        i--;
+                        particles.push(new Particle(Math.random() * canvas.width, Math.random() * canvas.height));
+                    }
+                }
+            }
+
+            function connect() {
+                let opacityValue = 1;
+                for (let a = 0; a < particles.length; a++) {
+                    for (let b = a; b < particles.length; b++) {
+                        let distance = Math.sqrt(
+                            (particles[a].x - particles[b].x) * (particles[a].x - particles[b].x) +
+                            (particles[a].y - particles[b].y) * (particles[a].y - particles[b].y)
+                        );
+                        if (distance < 100) {
+                            opacityValue = 1 - (distance / 100);
+                            ctx.strokeStyle = `rgba(88, 166, 255, ${opacityValue * 0.3})`;
+                            ctx.lineWidth = 1;
+                            ctx.beginPath();
+                            ctx.moveTo(particles[a].x, particles[a].y);
+                            ctx.lineTo(particles[b].x, particles[b].y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                handleParticles();
+                connect();
+                requestAnimationFrame(animate);
+            }
+
+            init();
+            animate();
+
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                particles = [];
+                init();
+            });
+        });
+    </script>
+
+</body>
+</html>
