@@ -9,17 +9,17 @@ class ModelingAgent(BaseAgent):
 
     def __init__(self, config: AgentConfig, state: PipelineState):
         super().__init__(config, state)
-        # ✅ Backward compatibility for config params
+        #  Backward compatibility for config params
         self.target_col = getattr(self.config, 'target_column', None)
         if self.target_col is None:
             self.target_col = getattr(self.config, 'target_col', 'subscribed')
         
-        # ✅ Default model_type aligned with trainer ("auto" supported)
+        #  Default model_type aligned with trainer ("auto" supported)
         self.model_type = getattr(self.config, 'model_type', 'auto')
         self.test_size = getattr(self.config, 'test_size', 0.2)
         self.random_state = getattr(self.config, 'random_state', 42)
         
-        # ✅ Ensure full metric set (includes ROC AUC)
+        #  Ensure full metric set (includes ROC AUC)
         self.metrics = getattr(
             self.config,
             'metrics',
@@ -34,7 +34,7 @@ class ModelingAgent(BaseAgent):
         """
         self.logger.info(f"Training and evaluating model (type={self.model_type})...")
         
-        # ✅ If preprocessing agent stored target_column in state, prefer that
+        #  If preprocessing agent stored target_column in state, prefer that
         if hasattr(self.state, 'target_column') and self.state.target_column:
             self.target_col = self.state.target_column
             self.logger.info(f"Using target column from state: {self.target_col}")
@@ -52,7 +52,7 @@ class ModelingAgent(BaseAgent):
             self.logger.error(error_msg)
             raise ValueError(error_msg)
         
-        # ✅ Define local config class for ModelTrainer
+        #  Define local config class for ModelTrainer
         class ModelTrainerConfig:
             def __init__(self, target_col, model_type, test_size, random_state,
                          metrics, cross_validate, cv_folds):
@@ -109,7 +109,7 @@ class ModelingAgent(BaseAgent):
                 'agent_name': 'ModelingAgent'
             }
 
-# ✅ Backward compatibility alias
+#  Backward compatibility alias
 def execute(self):
     """Alias for run() to maintain compatibility with orchestrator."""
     return self.run()
