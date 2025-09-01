@@ -42,7 +42,7 @@ class AgentConfig:
     generate_insights: bool = True
     top_features_count: int = 10
 
-    # ✅✅✅ MODEL TRAINER PARAMETERS ✅✅✅
+    #  MODEL TRAINER PARAMETERS 
     target_col: str = 'subscribed'
     model_type: str = 'logistic'
     test_size: float = 0.2
@@ -83,7 +83,7 @@ class PipelineState:
     model_report_path: str = None
     agent_outputs: Dict[str, Any] = field(default_factory=dict)
     file_path: str = None
-    # ✅ Add model training results to state
+    #  Add model training results to state
     model_training_results: Dict[str, Any] = field(default_factory=dict)
     modeling_results: Dict[str, Any] = field(default_factory=dict)
 
@@ -96,7 +96,7 @@ class AnalysisResult:
     execution_time: float = 0.0
     error: Optional[str] = None
     output_data: Optional[Any] = None
-    # ✅ Add additional metadata
+    #  Add additional metadata
     metrics: Dict[str, float] = field(default_factory=dict)
     artifacts: Dict[str, str] = field(default_factory=dict)
 
@@ -222,7 +222,7 @@ class BaseAgent:
         """Retrieve an artifact from the state."""
         return getattr(self.state, 'agent_outputs', {}).get(key, default)
 
-# ✅ Optional: Add utility functions for common operations
+#  Optional: Add utility functions for common operations
 
 def create_agent_config(**kwargs) -> AgentConfig:
     """Helper function to create AgentConfig with given parameters."""
