@@ -3,7 +3,7 @@ import os
 sys.path.append('/Users/apple/Desktop/multi_agents/agents')
 
 from base_agent import BaseAgent, AgentConfig, PipelineState 
-from exploratory_data_analyzer import EDAAnalyzer  # ✅ Correct import
+from exploratory_data_analyzer import EDAAnalyzer  #  Correct import
 
 class EDAAgent(BaseAgent):
     """An agent responsible for performing exploratory data analysis."""
@@ -20,7 +20,7 @@ class EDAAgent(BaseAgent):
         self.output_format = getattr(self.config, 'output_format', 'md')
         self.plot_style = getattr(self.config, 'plot_style', 'seaborn')
 
-    def run(self) -> str:  # ✅ Synchronous method
+    def run(self) -> str:  #  Synchronous method
         """
         Runs the EDAAnalyzer on the raw data and generates a report.
         """
